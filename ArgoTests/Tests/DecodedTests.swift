@@ -55,7 +55,22 @@ class DecodedTests: XCTestCase {
     default: XCTFail("Unexpected Case Occurred")
     }
   }
-  
+
+  func testDecodedMultipleErrors() {
+    let user: Decoded<User> = decode(JSONFromFile(file: "user_with_bad_type_and_missing_key")!)
+
+    let expected: [DecodeError] = [
+      .TypeMismatch(expected: "Int", actual: "String(1)"),
+      .MissingKey("name")
+    ]
+    print(expected)
+
+    switch user {
+    case let .Failure(.Multiple(errors)): XCTAssert(errors == expected)
+    default: XCTFail("Unexpected Case Occurred")
+    }
+  }
+
   func testDecodedMaterializeSuccess() {
     let user: Decoded<User> = decode(JSONFromFile(file: "user_with_email")!)
     let materialized = materialize { user.value! }

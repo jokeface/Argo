@@ -53,6 +53,7 @@ public extension Decoded {
     case let .Failure(.TypeMismatch(expected, actual)):
       return .Failure(.TypeMismatch(expected: expected, actual: actual))
     case let .Failure(.Custom(x)): return .Failure(.Custom(x))
+    case let .Failure(.Multiple(es)): return .Failure(.Multiple(es))
     }
   }
 
@@ -108,6 +109,18 @@ public extension Decoded {
   */
   static func customError<T>(message: String) -> Decoded<T> {
     return .Failure(.Custom(message))
+  }
+
+  /**
+   Convenience function for creating `.Multiple` errors
+
+   - parameter errors: The errors
+
+   - returns: A `Decoded.Failure` with a `.Multiple` error constructed from the
+   provided `errors` value
+   */
+  static func multipleErrors<T>(errors: [DecodeError]) -> Decoded<T> {
+    return .Failure(.Multiple(errors))
   }
 }
 
